@@ -1,0 +1,26 @@
+//引入http模块
+const http = require('http');
+const fs = require('fs');
+var text,title,price
+
+for(var i=300001;i<300500;i++)
+http.get('http://www.tmooc.cn/course/' + i + '.shtml', function(res) {
+    if (res.statusCode == 200){ 
+        res.on('data', function(chunk) {
+            text = chunk.toString()
+            if (text.match(/id="class_title">.*</ig)) {
+                title = text.match(/(?<=id="class_title">).*(?=<)/ig).toString()
+				price=text.match(/(?<=<h2 class="color-red c-state">).*(?=<)/ig)
+				if(price==null)
+				price='免费'
+			
+				console.log(title)
+				console.log(price+'\r\n')
+                fs.appendFileSync('课程标题.txt', title+price+'\r\n')
+				
+            }
+        })
+	}/*else
+		console.log('课程不存在')
+	*/
+})
